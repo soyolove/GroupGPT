@@ -4,30 +4,32 @@
 
 import React,{ useState,useRef,useEffect } from "react";
 import { Agent } from "@/drizzle/type-output";
-import { ChatPanel } from './chat-panel'
-import AIMessage from "./aiMessage";
-import UserMessage from "./userMessage"
-import { Button } from "@/components/ui/button";
+import { ChatPanel } from '@/components/GroupChat/Chat/chat-panel'
+import AIMessage from "@/components/GroupChat/Chat/aiMessage";
+import UserMessage from "@/components/GroupChat/Chat/userMessage"
 import { Separator } from "@/components/ui/separator";
-import {ChatScrollAnchor} from './chat-scroll-anchor'
+import {ChatScrollAnchor} from '@/components/GroupChat/Chat/chat-scroll-anchor'
+import {Message,GroupMessage} from '@/lib/modules'
 
 interface ChatProps {
-    selectedAgent: Agent[];
+    agentMember: Agent[];
     maxSpeaking:number;
     speakingGap:number;
-    initialMessage:string;
+    // initialMessage:string;
+    initialMessages?:GroupMessage[]
+    groupId:string    
 }
 
-interface Message{
-  id:string;
-  name:string;
-  role:'user' | 'agent';
-  content:string;
-}
+// interface Message{
+//   id:string;
+//   name:string;
+//   role:'user' | 'agent';
+//   content:string;
+// }
 
-interface GroupMessage extends Message{
-  agent?:Agent;
-}
+// interface GroupMessage extends Message{
+//   agent?:Agent;
+// }
 
 interface AiMessageHandles {
   completeMethod: () => void;
@@ -38,7 +40,13 @@ interface AiMessageHandles {
 
 
 
-export default function Chat({selectedAgent,maxSpeaking,speakingGap,initialMessage}: ChatProps) {
+export default function GroupChatMain({
+  agentMember,
+  maxSpeaking,
+  speakingGap,
+  initialMessages,
+  groupId
+}: ChatProps) {
 
 
   // 状态逻辑：
@@ -55,12 +63,12 @@ export default function Chat({selectedAgent,maxSpeaking,speakingGap,initialMessa
   const [userInput, setUserInput] = useState('');
 
   const [groupMessages, setGroupMessages] = useState<GroupMessage[]>(
-    [{id:'1',name:'user',role:'user',content:initialMessage}]
+    initialMessages || []
   );
 
-  const [chatHistory,setChatHistory] = useState<Message[]>(
-    [{id:'1',name:'user',role:'user',content:initialMessage}]
-  ); // 历史消息
+  const [chatHistory,setChatHistory] = useState<GroupMessage[]>(
+    initialMessages || []
+      ); // 历史消息
 
   const messageRefs = useRef<React.RefObject<AiMessageHandles>[]>([]);
 
@@ -86,37 +94,19 @@ export default function Chat({selectedAgent,maxSpeaking,speakingGap,initialMessa
     const uniqueId = crypto.randomUUID();
 
     const newRef = React.createRef<AiMessageHandles>(); // 创建新的ref
-    messageRefs.current.push(newRef); // 先将ref添加到数组中
+// 用处是操作AI message内的useCompletion，例如全局级别的stop
+
+    messageRefs.current.push(newRef); 
 
     setGroupMessages((prevMessages) => [...prevMessages, {id:uniqueId,agent:agent,name:agent.name,role:'agent',content:''}])
 
-    console.log(`new AI message is created, id is ${uniqueId} for agent ${agent.name}`)
+    // console.log(`new AI message is created, id is ${uniqueId} for agent ${agent.name}`)
 
-    
-    // 使用timeout延后处理
-    // 这里必须要延后处理，我认为可能是react会把状态更新打包执行，如果不延后的话，这段代码元素在未创建的时候就被调用了
-    // setTimeout(() => {
-    //   newRef.current?.completeMethod();
-    //   console.log(`detect ${agent.name} speaking, the ref state is ${newRef.current}`)
-    // }, 1000);
-    // 仍然不行，组件刚创建的时候还没有加载完成，ref拿不到里面的method，调用会空
+
     return newRef
 
   }
 
-  // useEffect(() => {
-  //   console.log('check messageRefs')
-  //   // 假设messageRefs是你存储子组件引用的数组
-  //   messageRefs.current.forEach(ref => {
-      
-  //     if (ref.current && !ref.current.isGenerated()) {
-  //       console.log('execute ref')
-  //       ref.current.completeMethod(); // 对未生成内容的子组件调用completeMethod
-  //     }
-  //   });
-  // }, [messageRefs]); // 当messageRefs变化时执行
-
-  
 
   
 
@@ -125,7 +115,7 @@ export default function Chat({selectedAgent,maxSpeaking,speakingGap,initialMessa
     if (inChatting){
       // 处理聊天初始化
       // setOngoingMessages([]); // 清空所有进行记录
-      setSpeakingOrder(selectedAgent); // 重置排队器
+      setSpeakingOrder(agentMember); // 重置排队器
       for (let i = 0; i < maxSpeaking; i++){
         
         // 从排队器中取出一个agent
@@ -142,7 +132,7 @@ export default function Chat({selectedAgent,maxSpeaking,speakingGap,initialMessa
     }else{
       // 处理停止的逻辑
       setOngoingMessages([]); // 清空所有进行记录
-      setSpeakingOrder(selectedAgent); // 重置排队器
+      setSpeakingOrder(agentMember); // 重置排队器
       messageRefs.current.forEach(ref=>{
         ref.current?.stopMethod()
       }
@@ -185,7 +175,7 @@ useEffect(()=>{
 
   if (inChatting){
   // 每次有新消息，都更新排队器
-  setSpeakingOrder(speakingOrder => RandomQueue([...speakingOrder],[...selectedAgent]))
+  setSpeakingOrder(speakingOrder => RandomQueue([...speakingOrder],[...agentMember]))
   }
 
 },[chatHistory])
@@ -237,6 +227,7 @@ useEffect(()=>{
                   return (
                     <div key={m.id}>
                     <AIMessage 
+                    groupId={groupId}
                     messageId={m.id} 
                     ref={messageRefs.current[index]}
                     chatHistory={chatHistory} 
@@ -244,6 +235,7 @@ useEffect(()=>{
                     agent={m.agent}
                     ongoingMessages={ongoingMessages}
                     setOngoingMessages={setOngoingMessages}
+                    initialContent={m.initialContent}
                     />
 
                     <Separator className="my-4 md:my-8" />
@@ -253,7 +245,9 @@ useEffect(()=>{
               }else if (m.role=='user'){
                 return(
                   <div key={m.id}>
-                    <UserMessage userMessage={m}/>
+                    <UserMessage 
+                    groupId={groupId}
+                    userMessage={m}/>
                     <Separator className="my-4 md:my-8" />
                     </div>
                 )
@@ -264,37 +258,6 @@ useEffect(()=>{
 
           </div>
       </div>
-
-
-      {/* {inChatting ? 
-      (<Button onClick={()=>{setInChatting(false)}}>Stop Chat</Button>)
-      :
-      (<Button onClick={()=>{setInChatting(true)}}>Start Chat</Button>)} */}
-
-{/*       
-      <div className="flex w-full max-w-sm items-center space-x-2">
-      <form onSubmit={(e) => {
-        e.preventDefault(); // 阻止表单默认提交行为
-        const uniqueId = crypto.randomUUID();
-
-        // 将用户输入的消息添加到groupMessages展示逻辑中
-        setGroupMessages([...groupMessages, { id:uniqueId,name: 'user', role: 'user', content: userInput }]);
-
-      // 同时添加到历史消息
-          setChatHistory([...chatHistory, { id:uniqueId,name: 'user', role: 'user', content: userInput }]); 
-        setUserInput(''); // 提交后清空输入框
-      }
-      }>
-        <textarea
-          name='userMessage'
-          placeholder="Say something..."
-          className="textarea-class" 
-          value={userInput}
-          onChange={(e) => setUserInput(e.target.value)} // 更新状态以反映用户输入
-        />
-        <Button type="submit">Send</Button>
-      </form>
-    </div> */}
 
 
     <ChatPanel

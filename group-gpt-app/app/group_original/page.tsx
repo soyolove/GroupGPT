@@ -1,10 +1,10 @@
-import {getAllAgent} from "@/lib/actions"
+import {getAllAgentWithoutUser} from "@/lib/actions"
 import GroupChat from './groupChatFrame'
 
 export default async function Page(){
 
     // const allAgents = await getAllAgentByAuth()
-    const allAgents = await getAllAgent()
+    const allAgents = await getAllAgentWithoutUser()
 
     if (Array.isArray(allAgents)){
         return(

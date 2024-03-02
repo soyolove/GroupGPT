@@ -5,6 +5,7 @@ import { Agent } from "@/drizzle/type-output";
 import { useEffect, useCallback, useState } from "react";
 import { useImperativeHandle, forwardRef } from "react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { addGroupMessage } from "@/lib/actions";
 
 interface Message {
   id: string;
@@ -14,6 +15,9 @@ interface Message {
 }
 
 interface AiMessageProps {
+  initialContent?: string;
+  groupId: string;
+
   messageId: string;
   agent: Agent;
   chatHistory: Message[];
@@ -37,15 +41,18 @@ const AiMessage = forwardRef<AiMessageHandles, AiMessageProps>(
       ongoingMessages,
       setOngoingMessages,
       messageId,
+      initialContent,
+      groupId
     },
     ref
   ) => {
-    console.log(agent.api+'/groupchat')
+    console.log(agent.api + "/groupchat");
     const [generated, setGenerated] = useState(false);
-    const { completion, complete, stop } = useCompletion({
-      api: agent.api+'/groupchat',
 
-      onFinish(prompt, completion) {
+    const { completion, complete, stop, setCompletion } = useCompletion({
+      api: agent.api + "/groupchat",
+
+      onFinish: async(prompt, completion) =>{
         setChatHistory([
           ...chatHistory,
           { id: prompt, name: agent.name, role: "agent", content: completion },
@@ -55,10 +62,11 @@ const AiMessage = forwardRef<AiMessageHandles, AiMessageProps>(
         );
         setOngoingMessages(newOngoingMessages);
         // Remove the messageId from ongoingMessages
+        await addGroupMessage(groupId,agent.id,completion)
+        
       },
 
       onError(error) {
-
         setChatHistory([
           ...chatHistory,
           {
@@ -76,8 +84,14 @@ const AiMessage = forwardRef<AiMessageHandles, AiMessageProps>(
     });
 
     useEffect(() => {
-      setOngoingMessages([...ongoingMessages, messageId]);
-      complete("Hi", { body: { groupMessages: chatHistory } });
+      // 如果不存在初始化内容，则进行生成
+      if (!initialContent) {
+        setOngoingMessages([...ongoingMessages, messageId]);
+        complete("Hi", { body: { groupMessages: chatHistory } });
+      } else {
+        // 如果存在初始化内容，跳过生成
+        setCompletion(initialContent);
+      }
     }, []);
 
     useImperativeHandle(ref, () => ({
@@ -96,12 +110,10 @@ const AiMessage = forwardRef<AiMessageHandles, AiMessageProps>(
     return (
       <div>
         <div className="flex flex-row items-center">
-        
-          <Avatar className='w-5 h-5 mr-2'>
+          <Avatar className="w-5 h-5 mr-2">
             <AvatarImage src={agent.avatar} alt={agent.name} />
           </Avatar>
-          <div className="text-sm">  {agent.name}
-          </div>
+          <div className="text-sm"> {agent.name}</div>
         </div>
         <div>{completion}</div>
       </div>

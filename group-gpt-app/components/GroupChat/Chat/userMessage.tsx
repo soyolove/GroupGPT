@@ -1,7 +1,7 @@
 'use client'
 import {useEffect} from 'react'
 import {Avatar,AvatarImage,AvatarFallback} from '@/components/ui/avatar'
-
+import { addGroupMessage } from '@/lib/actions'
 
 interface Message{
 
@@ -13,9 +13,10 @@ interface Message{
 
 interface UserMessageProps{
     userMessage:Message
+    groupId:string
 }
   
-export default function UserMessage({userMessage}:UserMessageProps){
+export default function UserMessage({userMessage,groupId}:UserMessageProps){
 
 
     useEffect(()=>{

@@ -58,11 +58,10 @@ export const chatChannel = pgTable("chatChannel",{
 
 
 export const agentsToChannels = pgTable('agents_to_channels', {
+  id: uuid('id').default(sql`uuid_generate_v4()`).primaryKey().notNull(),
   agentId: uuid('agent_id').notNull().references(() => agent.id),
-  channelId: uuid('channel_id').notNull().references(() => chatChannel.id),
-}, (t) => ({
-  pk: primaryKey({columns: [t.agentId, t.channelId]})}),
-)
+  channelId: uuid('channel_id').notNull().references(() => chatChannel.id,{ onDelete: "cascade" }),
+})
 
 
 

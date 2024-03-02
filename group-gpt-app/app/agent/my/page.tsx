@@ -1,13 +1,13 @@
 
 import { Agent } from "@/drizzle/type-output";
-import { getAllAgent } from "@/lib/actions";
+import { getAllAgentWithoutUser } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
 import Link  from "next/link";
 import { Avatar,AvatarImage } from "@/components/ui/avatar";
 
 
 export default async function Page(){
-    const agents = await getAllAgent();
+    const agents = await getAllAgentWithoutUser();
 
     return(
         <div>

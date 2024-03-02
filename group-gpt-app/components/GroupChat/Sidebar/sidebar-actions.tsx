@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { redirect, useRouter } from 'next/navigation'
 import * as React from 'react'
 import { toast } from 'react-hot-toast'
 
@@ -106,8 +106,7 @@ export function SidebarActions({
                   // }
 
                   setDeleteDialogOpen(false)
-                  router.refresh()
-                  router.push('/')
+                  
                   toast.success('Chat deleted')
                 })
               }}

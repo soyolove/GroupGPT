@@ -33,7 +33,8 @@ export function SidebarItem({ index, group, children }: SidebarItemProps) {
 
   const [newGroupId, setNewGroupId] = useLocalStorage('newGroupId', null)
 
-  const shouldAnimate = index === 0 && isActive && newGroupId
+  // const shouldAnimate = index === 0 && isActive && newGroupId
+  const shouldAnimate = index === 0 && isActive
 
   if (!group?.id) return null
 
@@ -111,7 +112,7 @@ export function SidebarItem({ index, group, children }: SidebarItemProps) {
                   }}
                   onAnimationComplete={() => {
                     if (index === group.groupName.length - 1) {
-                      setNewGroupId(null)
+                      // setNewGroupId(null)
                     }
                   }}
                 >

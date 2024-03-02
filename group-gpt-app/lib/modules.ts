@@ -5,8 +5,10 @@ export interface Message{
     name:string;
     role:'user' | 'agent';
     content:string;
+
   }
   
 export interface GroupMessage extends Message{
     agent?:Agent;
+    initialContent?:string;
   }

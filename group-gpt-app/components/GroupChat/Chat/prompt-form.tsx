@@ -15,11 +15,6 @@ import { IconArrowElbow, IconPlus } from '@/components/ui/icons'
 import { GroupMessage,Message } from '@/lib/modules'
 
 
-// export interface PromptProps
-//   extends Pick<UseChatHelpers, 'input' | 'setInput'> {
-//   onSubmit: (value: string) => void
-//   isLoading: boolean
-// }
 
 
 interface PromptProps{

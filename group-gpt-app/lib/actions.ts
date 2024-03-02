@@ -1,19 +1,57 @@
 'use server'
 
 import { db } from "@/drizzle/db";
-import { agent,chatChannel,minichar } from "@/drizzle/schema";
-import { sql, eq } from "drizzle-orm";
+import { agent,chatChannel,messageHistory,minichar,agentsToChannels } from "@/drizzle/schema";
+import { sql, eq,asc,desc } from "drizzle-orm";
 import { insertAgent, insertMinichar,insertAgentWithMiniChar } from "@/drizzle/type-output";
 import {v4} from 'uuid'
 import { supabase } from "@/drizzle/db";
 import { redirect } from 'next/navigation';
+import { Agent } from "@/drizzle/type-output";
+import { revalidatePath } from 'next/cache'
 
+
+export async function createGroupByAgents(agents:Agent[]){
+  'use server'
+  const groupId = v4()
+  const createGroup = await db.insert(chatChannel).values({
+    id:groupId,
+    groupName:agents.map(agent=>agent.name).join(' & ')
+
+  })
+  
+  agents.forEach(async(agent)=>{
+    await db.insert(agentsToChannels).values({
+      agentId:agent.id,
+      channelId:groupId
+    })
+  })
+  redirect('/group/'+groupId)
+
+  return {groupId:groupId}
+
+}
 
 export async function removeGroup(groupId:string){
   'use server'
   const deleteGroup = await db.delete(chatChannel).where(eq(chatChannel.id,groupId))
-  return deleteGroup
+  revalidatePath('/group')
+  redirect('/group')
+  // return deleteGroup
 }
+
+export async function addGroupMessage(groupId:string,agentId:string,content:string){
+  await db.insert(messageHistory).values({
+    agentId:agentId,
+    channelId:groupId,
+    message:content
+  })
+
+  await db.update(chatChannel).set({
+    lastUpdatedTime:new Date()
+  }).where(eq(chatChannel.id,groupId))
+}
+
 
 export async function shareChat(groupId:string){
   'use server'
@@ -27,6 +65,28 @@ export async function shareChat(groupId:string){
   }
 }
 
+export async function getGroupById(groupId:string){
+  'use server'
+  const groupMessages = await db.query.chatChannel.findFirst({
+    where: eq(chatChannel.id, groupId),
+    with:{
+      messageHistory:{
+        with:{
+          agent:true
+        },
+        orderBy:(messageHistory,{asc}) => asc(messageHistory.createAt)
+      },
+      members:{
+        with:{
+          agent:true,
+        }
+      }
+    }
+  })
+  return groupMessages
+}
+
+
 
 
 export async function getAllGroup(){
@@ -35,7 +95,8 @@ export async function getAllGroup(){
     with:{
       messageHistory:true,
       members:true
-    }
+    },
+    orderBy:desc(chatChannel.lastUpdatedTime)
   })
   return groups
 }
@@ -52,7 +113,7 @@ export async function getAgentById(id: string) {
 
 
 
-export async function getAllAgent() {
+export async function getAllAgentWithUser() {
   'use server'
   console.log('getting the agent')
   
@@ -69,6 +130,13 @@ export async function getAllAgent() {
 
 }
 
+export async function getAllAgentWithoutUser(){
+  'use server'
+  const agents = await db.query.agent.findMany({
+    where:eq(agent.isUser,false)
+  })
+  return agents
+}
 
 
 export async function createNewAgentWithMinichar(formdata: FormData) {

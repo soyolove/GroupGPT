@@ -9,6 +9,7 @@ interface SidebarListProps {
 
 export async function SidebarList() {
   const groups = await getAllGroup()
+  
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
