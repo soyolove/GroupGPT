@@ -2,6 +2,7 @@
 import {useEffect} from 'react'
 import {Avatar,AvatarImage,AvatarFallback} from '@/components/ui/avatar'
 import { addGroupMessage } from '@/lib/actions'
+import { Agent } from '@/drizzle/type-output'
 
 interface Message{
 
@@ -14,13 +15,20 @@ interface Message{
 interface UserMessageProps{
     userMessage:Message
     groupId:string
+    user:Agent
 }
   
-export default function UserMessage({userMessage,groupId}:UserMessageProps){
+export default function UserMessage({userMessage,groupId,user}:UserMessageProps){
 
+    
 
     useEffect(()=>{
-        console.log(1)
+        // console.log(1)
+        const addMessage = async(groupId:string,agentId:string,message:string) =>{
+            await addGroupMessage(groupId,agentId,message)
+        }
+        addMessage(groupId,user.id,userMessage.content)
+
     },[])
     return(
         <div>

@@ -1,7 +1,7 @@
 'use server'
 
 import { Button } from "@/components/ui/button"
-import TestAPI from "./testAPI"
+
 import ShowAllUseHistory from './showAllUseHistory'
 
 import { db } from "@/drizzle/db"
@@ -22,8 +22,7 @@ export default async function Page({params}:{params:{agentId:string}}) {
     
     return(
         <div>
-            <div>This is the Agent: {params.agentId}</div>
-            <TestAPI />
+            <div>Agent: {params.agentId}</div>
             <div>
                 -----------
             </div>

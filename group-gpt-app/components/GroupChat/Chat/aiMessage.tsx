@@ -6,13 +6,7 @@ import { useEffect, useCallback, useState } from "react";
 import { useImperativeHandle, forwardRef } from "react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { addGroupMessage } from "@/lib/actions";
-
-interface Message {
-  id: string;
-  name: string;
-  role: "user" | "agent";
-  content: string;
-}
+import { GroupMessage,Message } from "@/lib/modules";
 
 interface AiMessageProps {
   initialContent?: string;
@@ -22,8 +16,8 @@ interface AiMessageProps {
   agent: Agent;
   chatHistory: Message[];
   setChatHistory: (state: Message[]) => void;
-  ongoingMessages: string[];
-  setOngoingMessages: (state: string[]) => void;
+  ongoingMessages: GroupMessage[];
+  setOngoingMessages: (state: GroupMessage[]) => void;
 }
 
 interface AiMessageHandles {
@@ -51,6 +45,8 @@ const AiMessage = forwardRef<AiMessageHandles, AiMessageProps>(
 
     const { completion, complete, stop, setCompletion } = useCompletion({
       api: agent.api + "/groupchat",
+      
+      
 
       onFinish: async(prompt, completion) =>{
         setChatHistory([
@@ -58,7 +54,7 @@ const AiMessage = forwardRef<AiMessageHandles, AiMessageProps>(
           { id: prompt, name: agent.name, role: "agent", content: completion },
         ]);
         const newOngoingMessages = ongoingMessages.filter(
-          (id) => id !== messageId
+          (message) => message.id !== messageId
         );
         setOngoingMessages(newOngoingMessages);
         // Remove the messageId from ongoingMessages
@@ -77,7 +73,7 @@ const AiMessage = forwardRef<AiMessageHandles, AiMessageProps>(
           },
         ]);
         const newOngoingMessages = ongoingMessages.filter(
-          (id) => id !== messageId
+          (message) => message.id !== messageId
         );
         setOngoingMessages(newOngoingMessages);
       },
@@ -86,7 +82,7 @@ const AiMessage = forwardRef<AiMessageHandles, AiMessageProps>(
     useEffect(() => {
       // 如果不存在初始化内容，则进行生成
       if (!initialContent) {
-        setOngoingMessages([...ongoingMessages, messageId]);
+        setOngoingMessages([...ongoingMessages, { id: messageId,agent:agent, name: agent.name,role:'agent',content:'' }])
         complete("Hi", { body: { groupMessages: chatHistory } });
       } else {
         // 如果存在初始化内容，跳过生成
@@ -97,7 +93,7 @@ const AiMessage = forwardRef<AiMessageHandles, AiMessageProps>(
     useImperativeHandle(ref, () => ({
       completeMethod: () => {
         setGenerated(true);
-        setOngoingMessages([...ongoingMessages, messageId]);
+        setOngoingMessages([...ongoingMessages, { id: messageId,agent:agent, name: agent.name,role:'agent',content:'' }])
         complete("Hi", { body: { groupMessages: chatHistory } });
       },
 

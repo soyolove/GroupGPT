@@ -1,12 +1,15 @@
-import { getGroupById } from "@/lib/actions";
+import { getGroupById,getUser } from "@/lib/actions";
 import GroupChatMain from "@/components/GroupChat/group-chat";
 import { GroupMessage } from "@/lib/modules";
 
 export default async function Page({params}:{params:{channelId:string}}) {
 
   const group = await getGroupById(params.channelId);
+	const user = await getUser();
   
-  
+  if (!user){
+		return <div>Create your User profile FIRST</div>
+	}
 
   if (!group){
     return <div>Group not found</div>
@@ -27,5 +30,5 @@ export default async function Page({params}:{params:{channelId:string}}) {
 
 
 
-  return <GroupChatMain groupId={params.channelId} agentMember={agents} initialMessages={groupMessages}/>;
+  return <GroupChatMain user={user} groupId={params.channelId} agentMember={agents} initialMessages={groupMessages}/>;
 }

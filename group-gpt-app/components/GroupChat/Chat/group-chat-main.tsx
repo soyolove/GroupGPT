@@ -10,14 +10,17 @@ import UserMessage from "@/components/GroupChat/Chat/userMessage"
 import { Separator } from "@/components/ui/separator";
 import {ChatScrollAnchor} from '@/components/GroupChat/Chat/chat-scroll-anchor'
 import {Message,GroupMessage} from '@/lib/modules'
+import DevViewChart from '@/components/GroupChat/Chat/dev-view-card'
+
 
 interface ChatProps {
     agentMember: Agent[];
     maxSpeaking:number;
     speakingGap:number;
     // initialMessage:string;
-    initialMessages?:GroupMessage[]
-    groupId:string    
+    initialMessages?:GroupMessage[];
+    groupId:string  ;
+    user:Agent  
 }
 
 // interface Message{
@@ -45,7 +48,8 @@ export default function GroupChatMain({
   maxSpeaking,
   speakingGap,
   initialMessages,
-  groupId
+  groupId,
+  user,
 }: ChatProps) {
 
 
@@ -75,7 +79,7 @@ export default function GroupChatMain({
   
   const [speakingOrder,setSpeakingOrder] = useState<Agent[]>([]); // 排队器
 
-  const [ongoingMessages,setOngoingMessages] = useState<string[]>([]) 
+  const [ongoingMessages,setOngoingMessages] = useState<GroupMessage[]>([]) 
 // 正在进行生成（被发言）的消息id
 
   const [inChatting,setInChatting] = useState(false); // 是否正在聊天
@@ -201,11 +205,8 @@ useEffect(()=>{
         setTimeout(() => {
           const templateRef = CreateNewAIMessage(newAgent,'');
 
-        },speakingGap)
-        
-}
-        }
-}
+        },speakingGap)        
+}}}
 
 },[speakingOrder])
 
@@ -246,6 +247,7 @@ useEffect(()=>{
                 return(
                   <div key={m.id}>
                     <UserMessage 
+                    user = {user}
                     groupId={groupId}
                     userMessage={m}/>
                     <Separator className="my-4 md:my-8" />
@@ -273,6 +275,16 @@ useEffect(()=>{
         input={userInput}
         setInput={setUserInput}
       />
+
+
+    <DevViewChart
+     agentMember={agentMember} 
+     initialMessages={initialMessages}
+     ongoingMessages={ongoingMessages}
+     speakingOrder={speakingOrder}
+
+     
+     />
 
 
     </div>

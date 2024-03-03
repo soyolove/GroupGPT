@@ -9,7 +9,33 @@ import { supabase } from "@/drizzle/db";
 import { redirect } from 'next/navigation';
 import { Agent } from "@/drizzle/type-output";
 import { revalidatePath } from 'next/cache'
+import {z} from 'zod'
 
+export async function getUser(){
+  'use server'
+
+  const user = await db.query.agent.findFirst({
+    where:eq(agent.isUser,true)
+  })
+
+  return user
+
+}
+
+export async function createUser(formdata:FormData){
+  'use server'
+  const validatedFields = z.object({
+    name: z.string(),
+    email: z.string().email(),
+    password: z.string().min(8),
+  }).parse({
+    name: formdata.get("name"),
+
+  });
+
+  const {name,email,password} = validatedFields
+
+}
 
 export async function createGroupByAgents(agents:Agent[]){
   'use server'
