@@ -33,7 +33,7 @@ export default async function Page() {
         <TableBody>
         {agents.map((agent) => {
             return(
-            <TableRow>
+            <TableRow key={agent.id}>
                 {/* <TableCell className="font-medium">{agent.id}</TableCell> */}
                 <TableCell>
                     <div className='flex flex-row items-center w-[150px]'>

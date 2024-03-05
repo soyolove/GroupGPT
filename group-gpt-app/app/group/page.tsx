@@ -48,10 +48,10 @@ export default async function Page() {
                   Select one agent then chat
                 </div>
                 <div className='mb-1'>
-                  It's very similar to traditional chat-bot like ChatGPT/Poe. 
+                  It&apos;s very similar to traditional chat-bot like ChatGPT/Poe. 
                 </div>
                 <div>
-                  However, remember agent is smart. Something interesting may happen when the developer add some 'tricks' in the agent.
+                  However, remember agent is smart. Something interesting may happen when the developer add some &apos;tricks&apos; in the agent.
                 </div>
               </CardDescription>
             </CardHeader>

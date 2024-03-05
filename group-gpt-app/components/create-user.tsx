@@ -38,7 +38,7 @@ export function CreateUser({ open, setOpen }: CreateUserProps) {
             <DialogHeader>
               <DialogTitle>Create User Profile</DialogTitle>
               <DialogDescription>
-                You haven's create your user profile. Input your avatar and
+                You haven&apos;t create your user profile. Input your avatar and
                 name, then agents will recognize you better.
               </DialogDescription>
             </DialogHeader>

@@ -51,7 +51,7 @@ export default function Page() {
                 Generally, when a developer finish the agent-implementation, he/she wants to distribute and share the agent in a platform. GroupGPT allows the developer to access agent to this platform by API endpoints. 
               </div>
               <div className='mb-1'>
-                So, Access Layer will only influence what the agent shows in the platform. You can set avatar, name and introduction. All these information will show on platform and won't influence any inplementation of the agent.
+                So, Access Layer will only influence what the agent shows in the platform. You can set avatar, name and introduction. All these information will show on platform and won&apos;t influence any inplementation of the agent.
               </div>
           </div>
         </div>
@@ -82,7 +82,7 @@ export default function Page() {
             className='mt-1 mb-1'
             
           ></Input>
-          <label className='text-sm text-gray-500'>The name showed in this project. It won't influence anything in agent layer.</label>
+          <label className='text-sm text-gray-500'>The name showed in this project. It won&apos;t influence anything in agent layer.</label>
           </div>
 
           <div className="mb-4">
@@ -92,7 +92,7 @@ export default function Page() {
           name="agentIntro" 
           placeholder="Intro" 
           className='mt-1 mb-1' />
-          <label className='text-sm text-gray-500'>An introduction to your agent. It won't influence anything in agent layer.</label>
+          <label className='text-sm text-gray-500'>An introduction to your agent. It won&apos;t influence anything in agent layer.</label>
           
           </div>
 
@@ -104,10 +104,10 @@ export default function Page() {
           <h1 className='text-2xl font-bold '>Implementation Layer (mini-char)</h1>
           <div className='text-base text-gray-500'>
               <div className='mb-1'>
-              Implementation Layer is the core of the agent. In the abstract, "agent" is a pipeline which accepts information as input then give response as output. And Implementation Layer is the implementation of agent.
+              Implementation Layer is the core of the agent. In the abstract, &quot;agent&quot; is a pipeline which accepts information as input then give response as output. And Implementation Layer is the implementation of agent.
               </div>
               <div  className='mb-1'>
-                In GroupGPT, we offer a lightweight implementation of agent called 'mini-character'(mini-char) built in NextJS's backend. No need for any coding, just fill the form, then you can get a high-performance agent.
+                In GroupGPT, we offer a lightweight implementation of agent called &apos;mini-character&apos;(mini-char) built in NextJS&quot;s backend. No need for any coding, just fill the form, then you can get a high-performance agent.
               </div>
               <div  className='mb-1'>
                Mini-char is provided to ensure the full-experience of user. When the GroupGPT project is running, mini-char frame will be available together.
@@ -127,7 +127,7 @@ export default function Page() {
           placeholder="agent name"
           className='mt-1 mb-1'
           />
-          <label className='text-sm text-gray-500'>The agent's name. Agent will recognize and response using the name. </label>
+          <label className='text-sm text-gray-500'>The agent&apos;s name. Agent will recognize and response using the name. </label>
  
           </div>
 
@@ -185,7 +185,7 @@ export default function Page() {
             placeholder="agent target"
           ></Input>
           <label className='text-sm text-gray-500'>
-            If the agent has some specific targets to do, set here. It will control the agent's aims and behaviors.  
+            If the agent has some specific targets to do, set here. It will control the agent&apos;s aims and behaviors.  
           </label>
  
           </div>
@@ -195,7 +195,7 @@ export default function Page() {
           <Label className='text-base font-semibold'>Agent Rule</Label>
           <Input type="text" name="agentRule" placeholder="agent rules"></Input>
           <label className='text-sm text-gray-500'>
-            If the agent has some specific rules to follow, set here. If will limit the agent seriously. Sometimes you can also use this to control the agent's action precisely.
+            If the agent has some specific rules to follow, set here. If will limit the agent seriously. Sometimes you can also use this to control the agent&apos;s action precisely.
           </label>
  
           </div>
