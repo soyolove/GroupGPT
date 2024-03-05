@@ -1,13 +1,26 @@
-初始化
+# Quick start
 
-注册supabase账号
-配置环境变量
-选项1：使用脚本，自动配置（可能不稳定）
-选项2：手动配置，推送数据结构，创建supabase数据桶（现在不用手动创建了，后台检测到没有的话会自动创建）
+GroupGPT can run without back-end (like python implementation of agent) because it has a light-weight agent frame inside.
+
+To quick start with full experience and function, what you need to do is to set .env file.
+
+1. create .env file according to .env.example format
+
+2. get your supabase key and openai api-key 
+
+3. fill them to .env file
+
+4. run 'cd group-gpt-app' in terminal/cmd to enter the app folder
+
+5. run 'npm install' to install all dependencies
+
+6. run 'npm run dev' to start the app
+
+7. Generally, the app will be running on http://localhost:3000 , or you can see the url in terminal/cmd log
 
 
 
-
-todo-list
-
-- 修复“创建Group”时的动画问题，原则上应使用localstorage进行判断，我这里偷懒了，导致每次进入群聊页面如果是第一个Channel都会播放动画
+# to-do-list
+- fix animate of 'add group'. 
+- update mini-character to avoid unmeanningful chat
+- change the connection method from direct post to middleware.
