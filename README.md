@@ -4,7 +4,7 @@ GroupGPT can run without back-end (like python implementation of agent) because 
 
 To quick start with full experience and function, what you need to do is to set .env file.
 
-1. create .env file according to .env.example format
+1. create .env file in 'group-gpt-app' according to .env.example format
 
 2. get your supabase key and openai api-key 
 
