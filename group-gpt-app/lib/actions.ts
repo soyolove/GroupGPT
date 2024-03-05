@@ -11,6 +11,7 @@ import { Agent } from "@/drizzle/type-output";
 import { revalidatePath } from 'next/cache'
 import {z} from 'zod'
 
+
 export async function getUser(){
   'use server'
 
@@ -26,14 +27,37 @@ export async function createUser(formdata:FormData){
   'use server'
   const validatedFields = z.object({
     name: z.string(),
-    email: z.string().email(),
-    password: z.string().min(8),
-  }).parse({
-    name: formdata.get("name"),
-
+    avatar: z.string(),
+  }).safeParse({
+    name: formdata.get("userName"),
+    avatar: formdata.get("userAvatar"),
   });
 
-  const {name,email,password} = validatedFields
+  if (!validatedFields.success) {
+    console.log("not success");
+
+    console.log(validatedFields.error.flatten().fieldErrors);
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Missing Fields. Failed to Create User.",
+    };
+  }
+
+  const {name,avatar} = validatedFields.data
+
+  const user = await db.insert(agent).values({
+    name:name,
+    intro:'user',
+    api:'',
+    avatar:avatar,
+    isUser:true
+  })
+  
+  revalidatePath('/group')
+  // redirect('/')
+  
+
+
 
 }
 

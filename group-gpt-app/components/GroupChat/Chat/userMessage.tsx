@@ -35,10 +35,10 @@ export default function UserMessage({userMessage,groupId,user}:UserMessageProps)
             <div className="flex flex-row items-center">
             
             <Avatar className='w-5 h-5 mr-2'>
-                <AvatarImage  src="https://u2ewvsbhuhjy8vhw.public.blob.vercel-storage.com/566952b7b5cc5415e33122b20400ba0-5Bw62REotU3XER1NNgvkQGYqjlNm9A.jpg"/>
-                <AvatarFallback>UserName</AvatarFallback>
+                <AvatarImage  src={user.avatar}/>
+                <AvatarFallback>{user.name}</AvatarFallback>
             </Avatar>
-            <div className="text-sm">You
+            <div className="text-sm">{user.name}
             </div>
             </div>
             <div>{userMessage.content}</div>

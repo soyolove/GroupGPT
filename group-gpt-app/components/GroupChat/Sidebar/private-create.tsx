@@ -23,7 +23,7 @@ interface GroupCreateProps {
   children: React.ReactNode;
 }
 
-export function GroupCreate({ allAgents,children }: GroupCreateProps) {
+export function PrivateCreate({ allAgents,children }: GroupCreateProps) {
 
   const [selectedAgent, setSelectedAgent] = useState<Agent[]>([]);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -62,9 +62,9 @@ export function GroupCreate({ allAgents,children }: GroupCreateProps) {
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Choose Agents</DialogTitle>
+            <DialogTitle>Choose Agent</DialogTitle>
             <DialogDescription>
-              Choose Agents you want to add to the group chat
+              Choose One Agent you want to chat
             </DialogDescription>
           </DialogHeader>
 
@@ -86,7 +86,7 @@ export function GroupCreate({ allAgents,children }: GroupCreateProps) {
           <DialogFooter>
             <Button
               type="submit"
-							disabled={isCreatePending || selectedAgent.length <2 }
+							disabled={isCreatePending || selectedAgent.length >1 }
 							// @ts-ignore
               onClick={() => {
 								startCreateTransition(async()=>{
