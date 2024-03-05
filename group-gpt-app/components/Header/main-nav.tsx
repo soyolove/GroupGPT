@@ -26,22 +26,6 @@ export function MainNav() {
       </CustomLink>
       <NavigationMenu>
         <NavigationMenuList>
-          {/* <NavigationMenuItem>
-            <NavigationMenuTrigger>Create</NavigationMenuTrigger>
-            <NavigationMenuContent>
-              <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-                <ListItem href="/agent/my" title="Your Agent">
-                  All Agent you created
-                </ListItem>
-                <ListItem href="/create" title="Create Agent">
-                  Create Agent from Minichar-V2
-                </ListItem>
-                <ListItem href="/chat" title="Chat">
-                  Chat with the agent you created
-                </ListItem>
-              </ul>
-            </NavigationMenuContent>
-          </NavigationMenuItem> */}
 
           <NavigationMenuItem>
             <NavigationMenuLink
@@ -62,7 +46,7 @@ export function MainNav() {
 
           <NavigationMenuItem>
             <NavigationMenuLink
-              href="/agent/my"
+              href="/agent"
               className={navigationMenuTriggerStyle()}
             >
               Agent

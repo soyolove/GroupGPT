@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "@/app/globals.css";
 import { cn } from "@/lib/utils";
-import { GeistSans } from "geist/font/sans";
-import { GeistMono } from "geist/font/mono";
 import Header from "@/components/Header/header";
 import { Providers } from "@/components/providers";
+import { Inter,Noto_Sans_SC } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"] });
+const notoSansSC = Noto_Sans_SC({ subsets: ["latin"] });
+
+
 
 export const metadata: Metadata = {
   title: "Agent Playground",
@@ -20,13 +21,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html suppressHydrationWarning>
       <body
-        className={cn(
-          "font-sans antialiased",
-          GeistSans.variable,
-          GeistMono.variable
-        )}
+        className={notoSansSC.className}
       >
         <Providers
           attribute="class"

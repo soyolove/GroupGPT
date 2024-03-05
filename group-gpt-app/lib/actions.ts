@@ -296,7 +296,7 @@ const minicharId = v4()
   });
 
   console.log('create success')
-  redirect('/agent/my');
+  redirect('/agent');
 
 }
 
