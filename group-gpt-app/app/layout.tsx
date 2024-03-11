@@ -11,8 +11,8 @@ const notoSansSC = Noto_Sans_SC({ subsets: ["latin"] });
 
 
 export const metadata: Metadata = {
-  title: "Agent Playground",
-  description: "Make Agent For Everyone",
+  title: "GroupGPT",
+  description: "Open-Source Multi-Agents Playground",
 };
 
 export default function RootLayout({
