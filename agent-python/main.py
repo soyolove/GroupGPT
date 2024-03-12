@@ -20,9 +20,11 @@ app = FastAPI()
 class ChatProps(BaseModel):
     messages:str
 
+
+
 class ResponseChunk(BaseModel):
     content:str
-    appendix:str = 'some appendix'
+    state:str = None
 
 
 @app.post('/chat')
@@ -43,8 +45,6 @@ async def chat(chatprops:ChatProps):
         temperature=1,
         max_tokens=256,
         top_p=1,
-        # tools=tools,
-        # tool_choice='auto',
         stream=True
         )
    

@@ -33,8 +33,10 @@ export default async function Page() {
             </div>
           </CardContent>
           <CardFooter  className="absolute bottom-0 right-0">
-            <Button disabled={true}>
-                In Developing...
+            <Button >
+                <Link href='/create/general'>
+                Next Step
+                </Link>
             </Button>
           </CardFooter>
         </Card>

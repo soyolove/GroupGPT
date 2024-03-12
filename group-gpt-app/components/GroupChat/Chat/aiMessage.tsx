@@ -45,6 +45,10 @@ const AiMessage = forwardRef<AiMessageHandles, AiMessageProps>(
 
     const { completion, complete, stop, setCompletion } = useCompletion({
       api: agent.api + "/groupchat",
+      body:{
+        groupMessages: chatHistory,
+        agentAPI:agent.api,
+      },
       
       
 
@@ -83,7 +87,11 @@ const AiMessage = forwardRef<AiMessageHandles, AiMessageProps>(
       // 如果不存在初始化内容，则进行生成
       if (!initialContent) {
         setOngoingMessages([...ongoingMessages, { id: messageId,agent:agent, name: agent.name,role:'agent',content:'' }])
-        complete("Hi", { body: { groupMessages: chatHistory } });
+        complete("Hi", { body: { 
+          groupMessages: chatHistory,
+          agentAPI:agent.api,
+        
+        } });
       } else {
         // 如果存在初始化内容，跳过生成
         setCompletion(initialContent);
@@ -94,7 +102,7 @@ const AiMessage = forwardRef<AiMessageHandles, AiMessageProps>(
       completeMethod: () => {
         setGenerated(true);
         setOngoingMessages([...ongoingMessages, { id: messageId,agent:agent, name: agent.name,role:'agent',content:'' }])
-        complete("Hi", { body: { groupMessages: chatHistory } });
+        complete("Hi", { body: { groupMessages: chatHistory,agentAPI:agent.api, } });
       },
 
       stopMethod: () => {

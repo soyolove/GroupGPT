@@ -19,9 +19,12 @@ function parseCustomStream(): AIStreamParser {
 
   return (data,options) => {
 
-    const parsedJson = JSON.parse(data)
+    const parsedJson = JSON.parse(data) as {
+      content:string | null;
+      state:string | null;
+    }
 
-    const delta = parsedJson.content;
+    const delta = parsedJson.content? parsedJson.content : '';
 
     return delta
 
