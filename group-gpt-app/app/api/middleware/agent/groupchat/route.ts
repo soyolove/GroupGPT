@@ -9,7 +9,7 @@ import {
 
 } from 'ai';
 import {z} from 'zod'
-
+import { AgentSchema } from '@/drizzle/type-output';
 
 // Set the runtime to edge for best performance
 export const runtime = 'edge';
@@ -34,6 +34,7 @@ const ChatSchema = z.object({
   messages: z.array(MessageSchema),
   groupMessages: z.array(GroupMessage),
   agentAPI:z.string(),
+  agentInfo:AgentSchema
 });
 
 const GroupChatSchema = ChatSchema.omit({ messages: true });
@@ -67,22 +68,25 @@ function CustomStream(
 export async function POST(req: Request) {
 
 
-  const { groupMessages: originalGroupMessages,agentAPI:originalAgentAPI } = await req.json(); 
+  const { groupMessages: originalGroupMessages,agentAPI:originalAgentAPI,agentInfo:originalAgentInfo } = await req.json(); 
 
   const validatedFields = GroupChatSchema.safeParse({
     groupMessages: originalGroupMessages,
-    agentAPI:originalAgentAPI 
+    agentAPI:originalAgentAPI ,
+    agentInfo:originalAgentInfo
     
   });
 
   
   if (!validatedFields.success) {
+    console.log('middleware receive invalid requests')
+    console.log(validatedFields.error)
     return Response.json({
       message: "Invalid messages",
     });
   }
 
-  const { groupMessages,agentAPI } = validatedFields.data;
+  const { groupMessages,agentAPI,agentInfo } = validatedFields.data;
 
   console.log(agentAPI)
 
@@ -95,7 +99,8 @@ export async function POST(req: Request) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        groupMessages:groupMessages
+        groupMessages:groupMessages,
+        agentInfo:agentInfo
       }),
     },
   )

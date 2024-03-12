@@ -2,7 +2,7 @@
 
 
 
-import React,{ useState,useRef,useEffect } from "react";
+import React,{ useState,useRef,useEffect,createContext,useContext } from "react";
 import { Agent } from "@/drizzle/type-output";
 import { ChatPanel } from '@/components/GroupChat/Chat/chat-panel'
 import AIMessage from "@/components/GroupChat/Chat/aiMessage";
@@ -23,22 +23,13 @@ interface ChatProps {
     user:Agent  
 }
 
-// interface Message{
-//   id:string;
-//   name:string;
-//   role:'user' | 'agent';
-//   content:string;
-// }
-
-// interface GroupMessage extends Message{
-//   agent?:Agent;
-// }
 
 interface AiMessageHandles {
   completeMethod: () => void;
   stopMethod:()=>void
   isGenerated:()=>boolean
 }
+
 
 
 
@@ -62,6 +53,7 @@ export default function GroupChatMain({
   // 因此，需要有一个单独的数组，被用来维护完成生成的内容，排队器的触发将依赖这个数组（ChatHistory）
   // 而GroupMessages数组则被用于控制前端元素的渲染
   // 如果未来版本允许导入聊天记录，只要直接操作GroupMessages再同步给ChatHistory即可
+
 
 
   const [userInput, setUserInput] = useState('');
@@ -261,20 +253,22 @@ useEffect(()=>{
           </div>
       </div>
 
+        <ChatPanel
+            user={user}
+            inChatting={inChatting}
+            setInChatting={setInChatting}
+            groupMessages={groupMessages}
+            setGroupMessages={setGroupMessages}
+            chatHistory={chatHistory}
+            setChatHistory={setChatHistory}
 
-    <ChatPanel
-        inChatting={inChatting}
-        setInChatting={setInChatting}
-        groupMessages={groupMessages}
-        setGroupMessages={setGroupMessages}
-        chatHistory={chatHistory}
-        setChatHistory={setChatHistory}
+            // reload={reload}
+            // messages={messages}
+            input={userInput}
+            setInput={setUserInput}
+          />
 
-        // reload={reload}
-        // messages={messages}
-        input={userInput}
-        setInput={setUserInput}
-      />
+
 
 
     <DevViewChart

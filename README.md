@@ -19,8 +19,10 @@ To quick start with full experience and function, what you need to do is to set 
 7. Generally, the app will be running on http://localhost:3000 , or you can see the url in terminal/cmd log
 
 
+# Finished
+- change the connection method from direct post to middleware.
+
 
 # to-do-list
 - fix animate of 'add group'. 
 - update mini-character to avoid unmeanningful chat
-- change the connection method from direct post to middleware.

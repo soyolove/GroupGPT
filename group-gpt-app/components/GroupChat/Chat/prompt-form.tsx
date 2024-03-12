@@ -13,8 +13,8 @@ import {
 import { IconArrowElbow, IconPlus } from '@/components/ui/icons'
 // import { useRouter } from 'next/navigation'
 import { GroupMessage,Message } from '@/lib/modules'
-
-
+import { useContext } from 'react'
+import { Agent } from '@/drizzle/type-output'
 
 
 interface PromptProps{
@@ -26,6 +26,7 @@ interface PromptProps{
   setGroupMessages:(state:GroupMessage[])=>void,
   chatHistory:Message[],
   setChatHistory:(state:Message[])=>void,
+  user:Agent,
   
   
 }
@@ -38,9 +39,14 @@ export function PromptForm({
   groupMessages,
   setGroupMessages,
   chatHistory,
-  setChatHistory
+  setChatHistory,
+  user,
   // isLoading
+
 }: PromptProps) {
+
+
+
   const { formRef, onKeyDown } = useEnterSubmit()
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
   // const router = useRouter()
@@ -66,10 +72,10 @@ export function PromptForm({
         const uniqueId = crypto.randomUUID();
 
         // 将用户输入的消息添加到groupMessages展示逻辑中
-        setGroupMessages([...groupMessages, { id:uniqueId,name: 'user', role: 'user', content: input }]);
+        setGroupMessages([...groupMessages, { id:uniqueId,name:user.name, role: 'user', content: input }]);
 
       // 同时添加到历史消息
-        setChatHistory([...chatHistory, { id:uniqueId,name: 'user', role: 'user', content: input }]); 
+        setChatHistory([...chatHistory, { id:uniqueId,name: user.name, role: 'user', content: input }]); 
         setInput(''); // 提交后清空输入框
       }
     }

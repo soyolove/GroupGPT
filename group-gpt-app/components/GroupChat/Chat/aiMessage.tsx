@@ -64,7 +64,8 @@ const AiMessage = forwardRef<AiMessageHandles, AiMessageProps>(
       api: '/api/middleware/agent/groupchat',
       body:{
         groupMessages: chatHistory,
-        agentAPI:agentAPI
+        agentAPI:agentAPI,
+        agentInfo:agent
 ,
       },
       

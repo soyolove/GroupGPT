@@ -1,7 +1,6 @@
 import { agent,minichar, useHistory ,chatChannel} from "./schema"; 
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { getAllGroup } from "@/lib/actions";
-import { z } from 'zod';
 
 export type Agent = typeof agent.$inferSelect
 
@@ -11,6 +10,8 @@ export type UseHistory = typeof useHistory.$inferSelect
 export type ChatChannel = typeof chatChannel.$inferSelect
 
 export const insertAgent = createInsertSchema(agent)
+
+export const AgentSchema = createInsertSchema(agent).omit({createAt:true,intro:true})
 
 export const insertAgentWithMiniChar = createInsertSchema(agent).omit({api:true})
 
