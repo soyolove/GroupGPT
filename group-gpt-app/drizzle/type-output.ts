@@ -14,6 +14,8 @@ export const insertAgent = createInsertSchema(agent)
 
 export const insertAgentWithMiniChar = createInsertSchema(agent).omit({api:true})
 
+export const insertAgentWithAPI = createInsertSchema(agent)
+
 
 export const insertMinichar = createInsertSchema(minichar)
 

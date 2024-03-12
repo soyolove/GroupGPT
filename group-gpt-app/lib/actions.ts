@@ -3,7 +3,7 @@
 import { db } from "@/drizzle/db";
 import { agent,chatChannel,messageHistory,minichar,agentsToChannels } from "@/drizzle/schema";
 import { sql, eq,asc,desc } from "drizzle-orm";
-import { insertAgent, insertMinichar,insertAgentWithMiniChar } from "@/drizzle/type-output";
+import { insertAgent, insertMinichar,insertAgentWithMiniChar,insertAgentWithAPI } from "@/drizzle/type-output";
 import {v4} from 'uuid'
 import { supabase } from "@/drizzle/db";
 import { redirect } from 'next/navigation';
@@ -323,6 +323,110 @@ const minicharId = v4()
   redirect('/agent');
 
 }
+
+
+
+
+export async function createNewAgentWithAPI(formdata: FormData) {
+  "use server";
+    
+  const agentValidatedFields = insertAgentWithAPI.safeParse({
+    avatar: formdata.get("agentAvatar"),
+    name: formdata.get("agentShowName"),
+    intro: formdata.get("agentIntro"),
+    api:formdata.get('agentApi')
+  });
+
+  if (!agentValidatedFields.success) {
+    console.log("not success");
+
+    console.log(agentValidatedFields.error.flatten().fieldErrors);
+    return {
+      errors: agentValidatedFields.error.flatten().fieldErrors,
+      message: "Missing Fields. Failed to Create Agent.",
+    };
+  }
+  const {avatar:avatarBase64, name, intro,api } = agentValidatedFields.data;
+
+ 
+  if (!avatarBase64){
+    return {
+      errors: {avatar: "avatar is required"},
+      message: "Missing Fields. Failed to Create Agent.",
+    }
+  }
+
+
+
+  function dataURLToBlob(dataURL:string) {
+    return fetch(dataURL).then(res => res.blob());
+}
+
+  // function blobToFile(blob:Blob, fileName:string) {
+  //   return new File([blob], fileName, { type: blob.type });
+  // }
+
+
+const agentId = v4()
+const minicharId = v4()
+
+
+  const blob = await dataURLToBlob(avatarBase64);
+
+    // 将Blob对象转换为File对象
+    // 这里需要一个文件名，你可以从form中获取，或者自动生成
+    const fileName = `$avatar_${agentId}.png`; // 替换为实际的文件名
+    // const file = blobToFile(blob, fileName);
+
+    // 上传File对象
+    // const uploadResult = await put(file.name, file, { access: 'public' });
+    
+    const uploadAvatar = async(fileName:string,blob:Blob)=>{
+      const response = await supabase.storage.from('avatar').upload(fileName, blob)
+      return response
+    }
+
+    let avatarPath:string
+    avatarPath = ''
+    const {data,error} = await uploadAvatar(fileName,blob)
+    if (error){
+      console.log(error)
+      console.log('storage bucker has not been created. creating one now automaticly.')
+      await supabase.storage.createBucket('avatar',{public:true})
+      const {data:data_2nd,error:error_2nd} = await uploadAvatar(fileName,blob)
+      if (data_2nd){
+        avatarPath = data_2nd.path
+      }
+
+    }else{
+      avatarPath = data.path
+    }
+
+  const { data:publicAvatarData } = supabase
+  .storage
+  .from('avatar')
+  .getPublicUrl(avatarPath)
+
+  
+  
+  
+
+  const agentResponse = await db.insert(agent).values({
+    avatar:publicAvatarData.publicUrl,
+    id:agentId,
+    name: name,
+    intro: intro,
+    api:api
+  });
+  // console.log(agentResponse);
+
+
+
+  console.log('create success')
+  redirect('/agent');
+
+}
+
 
 
 

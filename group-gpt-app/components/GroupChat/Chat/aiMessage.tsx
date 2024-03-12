@@ -40,11 +40,33 @@ const AiMessage = forwardRef<AiMessageHandles, AiMessageProps>(
     },
     ref
   ) => {
-    console.log(agent.api + "/groupchat");
+
+
     const [generated, setGenerated] = useState(false);
 
+
+    const agentAPI = (()=>{ 
+      if (agent.api.includes('mini-character')){
+         // 使用 window.location 构建绝对 URL
+          const protocol = window.location.protocol; // 获取协议，例如 'http:'
+          const host = window.location.host; // 获取主机名和端口号（如果有的话），例如 'example.com:3000'
+          // 构造绝对 URL
+          console.log(`${protocol}//${host}${agent.api}`)
+          return `${protocol}//${host}${agent.api}`;
+      }else{
+        return agent.api
+      }
+
+      })()
+
+
     const { completion, complete, stop, setCompletion } = useCompletion({
-      api: agent.api + "/groupchat",
+      api: '/api/middleware/agent/groupchat',
+      body:{
+        groupMessages: chatHistory,
+        agentAPI:agentAPI
+,
+      },
       
       
 
@@ -83,8 +105,14 @@ const AiMessage = forwardRef<AiMessageHandles, AiMessageProps>(
       // 如果不存在初始化内容，则进行生成
       if (!initialContent) {
         setOngoingMessages([...ongoingMessages, { id: messageId,agent:agent, name: agent.name,role:'agent',content:'' }])
-        complete("Hi", { body: { groupMessages: chatHistory } });
+        complete("Hi", { body: { 
+          groupMessages: chatHistory,
+          agentAPI:agentAPI,
+        
+        } });
       } else {
+
+        
         // 如果存在初始化内容，跳过生成
         setCompletion(initialContent);
       }
@@ -94,7 +122,7 @@ const AiMessage = forwardRef<AiMessageHandles, AiMessageProps>(
       completeMethod: () => {
         setGenerated(true);
         setOngoingMessages([...ongoingMessages, { id: messageId,agent:agent, name: agent.name,role:'agent',content:'' }])
-        complete("Hi", { body: { groupMessages: chatHistory } });
+        complete("Hi", { body: { groupMessages: chatHistory,agentAPI:agentAPI, } });
       },
 
       stopMethod: () => {

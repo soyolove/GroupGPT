@@ -4,6 +4,7 @@ import { z } from "zod";
 import { db } from "@/drizzle/db";
 import { eq } from "drizzle-orm";
 import { minichar, useHistory } from "@/drizzle/schema";
+import { NextApiResponse} from 'next'
 
 import { HttpsProxyAgent } from "https-proxy-agent";
 import http from "http";
@@ -41,9 +42,11 @@ const ChatSchema = z.object({
 
 const GroupChatSchema = ChatSchema.omit({ messages: true });
 
-export async function POST(req: Request, { params }: { params: {minicharId:string} }) {
+export async function POST(req: Request, res: NextApiResponse) {
   // console.log('receive AI request')
-  const minicharId = params.minicharId;
+  // const minicharId = params.minicharId;
+  const urlList = req.url.split('/')
+  const minicharId = urlList[urlList.length-2]
 
   const { groupMessages: originalGroupMessages } = await req.json(); 
 
@@ -103,7 +106,6 @@ Please speaking like these few-shots:
 ${minicharAgent.agentSpeech}
 
 `;
-  const messages = validatedFields.data;
 
   let modelName;
   modelName = "gpt-3.5-turbo-0125";
@@ -123,29 +125,41 @@ ${minicharAgent.agentSpeech}
     ],
   });
 
-  // Convert the response into a friendly text-stream
-  let startTimestamp: number;
-  let timeCost: number;
-  let tokenCost = 0;
+  // const stream = OpenAIStream(response);
 
-  const stream = OpenAIStream(response, {
-    onStart: async () => {
-      // 计时开始
-      startTimestamp = Date.now();
-    },
-    onFinal: async (completion) => {
-      timeCost = Date.now() - startTimestamp;
-      // console.log(timeCost)
-      // console.log(tokenCost)
-    },
-    onToken: async (token) => {
-      // console.log(token)
+  // // Respond with the stream
+  // return new StreamingTextResponse(stream);
 
-      // 最简单的方法计算token消耗
-      tokenCost = tokenCost + 1;
-    },
-  });
+    // 使用异步迭代器遍历 OpenAI 的响应
+    async function* generateResponse() {
+      for await (const chunk of response) {
+        const token = chunk.choices[0].delta.content
+        if (token === undefined) {
+          break;
+        }
+        yield `data: ${JSON.stringify({ content: token,status:'ongoing' })}\n\n`;
+      }
+    }
+  
+    function iteratorToStream(iterator: any) {
+      return new ReadableStream({
+        async pull(controller) {
+          const { value, done } = await iterator.next()
+     
+          if (done) {
+            controller.close()
+          } else {
+            controller.enqueue(value)
+          }
+        },
+      })
+    }
 
-  // Respond with the stream
-  return new StreamingTextResponse(stream);
-}
+    const stream = iteratorToStream(generateResponse())
+ 
+    return new Response(stream)
+
+  }
+
+
+
